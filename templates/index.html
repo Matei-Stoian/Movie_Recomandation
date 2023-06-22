@@ -1,10 +1,75 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.js">
+    </script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.js">
+    </script>
+
+    <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/ui-lightness/jquery-ui.css" rel="stylesheet"
+        type="text/css" />
 </head>
+<style>
+    img{
+        height: 250px;
+        width: 190px;
+        display: inline;
+        margin: 20px;
+    }
+    button{
+        display: grid;
+    }
+</style>
 <body>
     <h1>Main Page</h1>
-    <input type="text">
+    <input type="text" id="autocomplete">
+    <button id="search">Get Recomandation</button>
+    <script>
+        $('#search').click(function()
+        {
+            window.location.pathname = '/'+$('#autocomplete').val();
+        });
+        $(function () {
+            var movies = [
+                {% for m in movie %}
+                  "{{m}}",
+            {% endfor %}
+          ];
+
+        $("#autocomplete").autocomplete({
+            source: movies
+        });
+        } );
+        function redirectToPace(word) {
+            window.location.href = "http://127.0.0.1:1234/" + word;
+        }
+        var topr = [
+            {% for r in recomand %}
+                '{{r}}',
+            {%endfor%}
+        ]
+        $('document').ready(function () {
+            for(r in topr){
+            $.getJSON("https://api.themoviedb.org/3/search/movie?api_key=15d2ea6d0dc1d476efbca3eba2b9bbfb&query=" + topr[r] + "&callback=?", function (json) {
+               console.log(json);
+               $('#top').append('<a href="'+window.location.origin+'/'+json.results[0].title+'">'+'<img src="http://image.tmdb.org/t/p/w500/' + json.results[0].poster_path + '"></a>');
+               console.log(json.results[0].title);
+            });
+        }
+            $('#autocomplete').keyup(function(event){
+                if(event.keyCode == 13)
+                {
+                    redirectToPace($('#autocomplete').val());
+                }
+            });
+            
+        });
+    </script>
+    <div id="test"></div>
+    <h1>This are some Recomandation</h1>
+    <div id="top"></div>
 </body>
+
 </html>

@@ -1,11 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.js">
+    </script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.js">
+    </script>
+
+    <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/ui-lightness/jquery-ui.css" rel="stylesheet"
+        type="text/css" />
 </head>
+<style>
+    img {
+        height: 250px;
+        width: 190px;
+        display: inline;
+        margin: 20px;
+    }
+</style>
+
 <body>
-    {% for i in split%}
-        <h1>{{ i }}</h1>
-    {% endfor%}
+    <script>
+        var movie_recomad = [
+            {% for i in split %}
+        '{{i}}',
+            {% endfor %}
+        ];
+
+        $('document').ready(function () {
+            $('#recom').html('<h1> The movies similar to ' + movie_recomad[0] + ' are:</h1>');
+
+            $.getJSON("https://api.themoviedb.org/3/search/movie?api_key=15d2ea6d0dc1d476efbca3eba2b9bbfb&query=" + movie_recomad[0] + "&callback=?", function (json) {
+                console.log(json);
+                $('#title_poster').append('<img src="http://image.tmdb.org/t/p/w500/' + json.results[0].poster_path + '">');
+                $('#description').html('<p>'+json.results[0].overview+'</p>')
+            });
+
+
+
+            for (let i = 1; i < movie_recomad.length; i++) {
+                $.getJSON("https://api.themoviedb.org/3/search/movie?api_key=15d2ea6d0dc1d476efbca3eba2b9bbfb&query=" + movie_recomad[i] + "&callback=?", function (json) {
+                    console.log(json);
+                    $('#recom').append('<a href="' + window.location.origin + '/' + movie_recomad[i] + '">' + '<img src="http://image.tmdb.org/t/p/w500/' + json.results[0].poster_path + '"></a>');
+                });
+            }
+            $('#home').click(function()
+            {
+                window.location.href = window.location.origin;
+            });
+        });
+    </script>
+    <div id="title_poster"></div>
+    <div id="description"></div>
+    <button id="home">Go Home</button>
+    <div id="recom"></div>
+
 </body>
+
 </html>
