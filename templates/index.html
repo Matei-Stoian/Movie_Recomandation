@@ -43,7 +43,8 @@
         });
         } );
         function redirectToPace(word) {
-            window.location.href = "http://127.0.0.1:1234/" + word;
+            var baseUrl = window.location.origin;
+            window.location.href = baseUrl + "/" + word;
         }
         var topr = [
             {% for r in recomand %}
